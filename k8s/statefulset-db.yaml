@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: db
+  serviceName: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      initContainers:
+      - name: rmdir
+        image: alpine
+        volumeMounts:
+        - mountPath: /vol
+          name: postgresql-data
+        command: ["sh", "-c", "if [ -d /vol/lost+found ]; then rmdir /vol/lost+found; fi"]
+      containers:
+      - name: postgres
+        image: postgres:alpine
+        env:
+        - name: POSTGRES_HOST_AUTH_METHOD
+          value: trust
+        - name: POSTGRES_DB
+          value: music
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: postgresql-data
+        resources:
+          requests:
+            memory: 250M
+            cpu: 0.1
+          limits:
+            memory: 1G
+            cpu: 2
+  volumeClaimTemplates:
+  - metadata:
+      name: postgresql-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi
+
