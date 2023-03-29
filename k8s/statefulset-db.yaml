@@ -6,6 +6,7 @@ spec:
   selector:
     matchLabels:
       app: db
+  serviceName: db
   template:
     metadata:
       labels:
