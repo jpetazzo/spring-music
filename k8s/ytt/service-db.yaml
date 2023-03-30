@@ -1,0 +1,18 @@
+#@ load("@ytt:data", "data")
+---
+#@ if data.values.create_db:
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: db
+  name: db
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: db
+  type: #@ data.values.db_svc_type
+#@ end

@@ -40,6 +40,8 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: postgresql-data
+      annotations:
+        kapp.k14s.io: "owned-for-deletion"
     spec:
       accessModes: ["ReadWriteOnce"]
       resources:
